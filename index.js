@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import Fs from "node:fs";
 import meow from "meow";
+import Process from "node:process";
+import Path from "node:path";
 import { tsImport } from "tsx/esm/api";
 import {
 	pgGenerate,
@@ -55,7 +57,10 @@ if (!cli.input.length) {
 }
 
 const relational = false;
-const schema = await tsImport(process.argv[2], import.meta.url);
+const schema = await tsImport(
+	Path.resolve(Process.cwd(), process.argv[2]),
+	import.meta.url,
+);
 
 let method = null;
 
@@ -72,21 +77,21 @@ if (cli.flags.type) {
 		sqlite: sqliteGenerate,
 	}[cli.flags.type];
 } else {
-	for (let e of Object.values(schema)) {
+	for (const e of Object.values(schema)) {
 		const name = e?.constructor?.name;
 		if (typeof name !== "string") continue;
 		if (name.startsWith("Pg")) {
-			log(`Detected Postgres`);
+			log("Detected Postgres");
 			method = pgGenerate;
 			break;
 		}
 		if (name.startsWith("My")) {
-			log(`Detected MySQL`);
+			log("Detected MySQL");
 			method = mysqlGenerate;
 			break;
 		}
 		if (name.startsWith("SQ")) {
-			log(`Detected SQLite`);
+			log("Detected SQLite");
 			method = sqliteGenerate;
 			break;
 		}
@@ -100,7 +105,7 @@ if (!method) {
 
 let output = method({ schema, relational });
 
-let format = cli.flags.format || "dbml";
+const format = cli.flags.format || "dbml";
 
 if (format === "svg" || format === "dot") {
 	const { run } = await import("@softwaretechnik/dbml-renderer");
