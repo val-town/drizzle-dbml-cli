@@ -19,6 +19,7 @@
 	"author": "Tom MacWright",
 	"license": "ISC",
 	"dependencies": {
+		"@biomejs/biome": "^1.9.3",
 		"@softwaretechnik/dbml-renderer": "^1.0.30",
 		"drizzle-dbml-generator": "^0.9.0",
 		"meow": "^13.2.0",
