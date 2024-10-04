@@ -10,6 +10,7 @@ This module provides:
 - Automatic TypeScript support (with [tsx](https://npmjs.com/tsx))
 - Detection for what kind of Drizzle schema you have (Postgres, SQLite, and MySQL supported)
 - Writing to stdout or a file
+- Support for writing SVG or DOT output, using [dbml-renderer](https://github.com/softwaretechnik-berlin/dbml-renderer)
 
 ```sh
 npx drizzle-dbml-cli db/schema.ts
@@ -18,21 +19,20 @@ npx drizzle-dbml-cli db/schema.ts
 ### Help
 
 ```
-➜ node index.js --help
-
   A quick and dirty CLI for drizzle-dbml-generator
 
   Usage
     $ drizzle-dbml-cli <input>
 
   Options
-    --type, -t  Explicit type: one of sqlite, mysql, or pg
-                 If not provided, it'll be auto-detected
+    --type, -t      Explicit type: one of sqlite, mysql, or pg
+                     If not provided, it'll be auto-detected
 
-    -o          Save output to the given output file
-                 instead of writing to stdout
+    -o              Save output to the given output file
+                     instead of writing to stdout
 
     --verbose, -v   Verbose output
+    --format, -f    Format, one of dbml, svg, or dot.
 
   Examples
     $ drizzle-dbml-cli db/schema.ts

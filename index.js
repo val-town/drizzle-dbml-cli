@@ -14,13 +14,14 @@ const cli = meow(
 	  $ drizzle-dbml-cli <input>
 
 	Options
-	  --type, -t  Explicit type: one of sqlite, mysql, or pg
-                If not provided, it'll be auto-detected
+	  --type, -t      Explicit type: one of sqlite, mysql, or pg
+                    If not provided, it'll be auto-detected
 
-	  -o          Save output to the given output file
-                instead of writing to stdout
+	  -o              Save output to the given output file
+                    instead of writing to stdout
 
 	  --verbose, -v   Verbose output
+	  --format, -f    Format, one of dbml, svg, or dot.
 
 	Examples
 	  $ drizzle-dbml-cli db/schema.ts
@@ -32,6 +33,11 @@ const cli = meow(
 				type: "string",
 				shortFlag: "t",
 				choices: ["sqlite", "mysql", "pg"],
+			},
+			format: {
+				type: "string",
+				shortFlag: "f",
+				choices: ["dbml", "svg", "dot"],
 			},
 			o: {
 				type: "string",
@@ -92,7 +98,14 @@ if (!method) {
 	process.exit(1);
 }
 
-const output = method({ schema, relational });
+let output = method({ schema, relational });
+
+let format = cli.flags.format || "dbml";
+
+if (format === "svg" || format === "dot") {
+	const { run } = await import("@softwaretechnik/dbml-renderer");
+	output = run(output, format);
+}
 
 if (cli.flags.o) {
 	Fs.writeFileSync(cli.flags.o, output);
